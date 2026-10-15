@@ -1,0 +1,30 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "profile": {
+          "displayName": { ".validate": "newData.isString() && newData.val().length <= 50" }
+        },
+        "budget": {
+          "monthly": { ".validate": "newData.isNumber() && newData.val() >= 0" }
+        },
+        "transactions": {
+          "$tid": {
+            ".validate": "newData.hasChildren(['type','amount','category','date','createdAt'])",
+            "type": { ".validate": "newData.val() === 'income' || newData.val() === 'expense'" },
+            "amount": { ".validate": "newData.isNumber() && newData.val() > 0" },
+            "category": { ".validate": "newData.isString() && newData.val().length <= 30" },
+            "date": { ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)" },
+            "description": { ".validate": "newData.isString() && newData.val().length <= 200" },
+            "createdAt": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    }
+  }
+}
